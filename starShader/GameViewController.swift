@@ -45,7 +45,7 @@ class GameViewController: UIViewController {
         
         // animate the 3d object
         ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-        
+        ship.isHidden = true
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
@@ -64,6 +64,23 @@ class GameViewController: UIViewController {
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+        
+        let node = SCNNode()
+        node.geometry = SCNPlane(width: 10, height: 10)
+
+        var material = SCNMaterial()
+        let url = Foundation.URL(fileURLWithPath: Bundle.main.path(forResource: "Twinkle", ofType: "shader", inDirectory: nil)!)
+        do{
+            let shader = try String(contentsOf: url, encoding: String.Encoding.utf8)
+            material.shaderModifiers = [
+                SCNShaderModifierEntryPoint.fragment: shader]
+        }catch{
+            print("Can't find resource")
+        }
+
+        node.geometry?.firstMaterial = material
+//        node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "test3.png")
+        scene.rootNode.addChildNode(node)
     }
     
     @objc
